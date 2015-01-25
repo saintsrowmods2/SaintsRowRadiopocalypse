@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace RadioSwapper
 {
@@ -81,36 +82,132 @@ namespace RadioSwapper
             this.Close();
         }
 
+        private string FileToConvert;
+        private string ConvertedFile;
+        private void DoConversion(ProgressDialog dialog)
+        {
+            dialog.SetProgressBarSettings(0, 100, 10, ProgressBarStyle.Marquee);
+            dialog.SetTitle("Converting file...");
+            dialog.SetText("Converting file...");
+
+            string filename = FileToConvert;
+
+            string tempDir = Path.Combine(Program.ExeLocation, "temp");
+            string convertedDir = Path.Combine(Program.ExeLocation, "converted");
+
+            string wwisePath = "";
+
+            string wwise32bit = @"C:\Program Files (x86)\Audiokinetic\Wwise v2012.2 build 4419\Authoring\Win32\Release\bin\WwiseCLI.exe";
+            string wwise64bit = @"C:\Program Files (x86)\Audiokinetic\Wwise v2012.2 build 4419\Authoring\Win32\Release\bin\WwiseCLI.exe";
+
+            if (File.Exists(wwise32bit))
+            {
+                wwisePath = wwise32bit;
+            }
+            else if (File.Exists(wwise64bit))
+            {
+                wwisePath = wwise64bit;
+            }
+            else
+            {
+                MessageBox.Show("Could not find a Wwise installation.\nYou need Wwise v2012.2 build 4419 installed to use audio that is not in wem format.");
+                return;
+            }
+
+            if (!Directory.Exists(tempDir))
+                Directory.CreateDirectory(tempDir);
+
+            if (!Directory.Exists(convertedDir))
+                Directory.CreateDirectory(convertedDir);
+
+            string tempWavPath = Path.Combine(tempDir, Path.ChangeExtension(Path.GetFileName(filename), "wav"));
+            string wemPath = Path.Combine(convertedDir, "Windows", Path.ChangeExtension(Path.GetFileName(filename), "wem"));
+
+            if (File.Exists(wemPath))
+            {
+                filename = wemPath;
+            }
+            else
+            {
+                string projectPath = Path.Combine(Program.ExeLocation, "wwise", "Test.wproj");
+                string sourcesPath = Path.Combine(tempDir, "settings.wsources");
+
+                string ffmpegParams = String.Format("-i \"{0}\" \"{1}\"", filename, tempWavPath);
+
+                if (File.Exists(tempWavPath))
+                    File.Delete(tempWavPath);
+
+                if (File.Exists(wemPath))
+                    File.Delete(wemPath);
+
+                ProcessStartInfo ffmpeg_psi = new ProcessStartInfo(Path.Combine(Program.ExeLocation, "ffmpeg.exe"), ffmpegParams);
+                ffmpeg_psi.CreateNoWindow = true;
+                ffmpeg_psi.WindowStyle = ProcessWindowStyle.Hidden;
+                Process ffmpeg = Process.Start(ffmpeg_psi);
+                ffmpeg.WaitForExit();
+
+                if (File.Exists(sourcesPath))
+                    File.Delete(sourcesPath);
+
+                using (Stream sourcesStream = File.OpenWrite(sourcesPath))
+                {
+                    using (XmlWriter writer = XmlWriter.Create(sourcesStream))
+                    {
+                        writer.WriteStartDocument();
+                        writer.WriteStartElement("ExternalSourcesList");
+                        writer.WriteAttributeString("SchemaVersion", "1");
+                        writer.WriteAttributeString("Root", tempDir);
+                        writer.WriteStartElement("Source");
+                        writer.WriteAttributeString("Path", Path.GetFileName(tempWavPath));
+                        writer.WriteAttributeString("Conversion", "Default Conversion Settings");
+                        writer.WriteEndElement();
+                        writer.WriteEndElement();
+                        writer.WriteEndDocument();
+                    }
+                }
+
+                ProcessStartInfo wwise_psi = new ProcessStartInfo(wwisePath, String.Format("\"{0}\" -ConvertExternalSources Windows \"{1}\" -ExternalSourcesOutput \"{2}\"", projectPath, sourcesPath, convertedDir));
+                wwise_psi.CreateNoWindow = true;
+                wwise_psi.WindowStyle = ProcessWindowStyle.Hidden;
+                Process wwise = Process.Start(wwise_psi);
+                wwise.WaitForExit();
+
+                if (File.Exists(tempWavPath))
+                    File.Delete(tempWavPath);
+
+                filename = wemPath;
+            }
+
+            dialog.CloseDialog();
+
+            ConvertedFile = filename;
+        }
+
         private void BrowseButton_Click(object sender, EventArgs e)
         {
-            BrowseOpenDialog.ShowDialog();
+            DialogResult dr = BrowseOpenDialog.ShowDialog();
+            if (dr == System.Windows.Forms.DialogResult.OK)
+            {
+                string filename = BrowseOpenDialog.FileName;
+
+                string extension = Path.GetExtension(filename);
+                if (extension != ".wem")
+                {
+                    ProgressDialog dialog = new ProgressDialog();
+                    FileToConvert = filename;
+                    dialog.RunTask(true, DoConversion);
+                    filename = ConvertedFile;
+                }
+
+                DurationPicker.Value = DurationCalculator.GetDuration(filename);
+
+                FileNameBox.Text = filename;
+
+            }
         }
 
         private void BrowseOpenDialog_FileOk(object sender, CancelEventArgs e)
         {
-            string filename = BrowseOpenDialog.FileName;
-
-            ProcessStartInfo psi = new ProcessStartInfo(Path.Combine(Program.ExeLocation, "ogg-info.exe"), "\"" + filename + "\"");
-            psi.CreateNoWindow = true;
-            psi.WindowStyle = ProcessWindowStyle.Hidden;
-            psi.RedirectStandardOutput = true;
-            psi.RedirectStandardInput = true;
-            psi.RedirectStandardError = true;
-            psi.UseShellExecute = false;
-            Process p = Process.Start(psi);
-            p.Start();
-            p.WaitForExit();
-            string output = p.StandardOutput.ReadToEnd();
-            string[] lines = output.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-
-            decimal sampleRate = decimal.Parse(lines[0]);
-            decimal samples = decimal.Parse(lines[1]);
-            decimal duration = (samples / sampleRate) * 1000;
-
-            duration = Math.Ceiling(duration);
-            DurationPicker.Value = duration;
-
-            FileNameBox.Text = filename;
         }
     }
 }

@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DurationCalculator.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -51,6 +52,12 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
+    <Compile Include="ProgressDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProgressDialog.designer.cs">
+      <DependentUpon>ProgressDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TrackPicker.cs">
       <SubType>Form</SubType>
@@ -58,8 +65,49 @@
     <Compile Include="TrackPicker.Designer.cs">
       <DependentUpon>TrackPicker.cs</DependentUpon>
     </Compile>
+    <Content Include="wwise\Attenuations\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Actor-Mixer Hierarchy\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Arguments\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Conversion Settings\Default Work Unit.wwu">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Conversion Settings\Factory Conversion Settings.wwu">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Dynamic Dialogue\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Effects\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Events\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Game Parameters\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Interactive Music Hierarchy\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Master-Mixer Hierarchy\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Mixing Sessions\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProgressDialog.resx">
+      <DependentUpon>ProgressDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -73,6 +121,9 @@
     <EmbeddedResource Include="TrackPicker.resx">
       <DependentUpon>TrackPicker.cs</DependentUpon>
     </EmbeddedResource>
+    <Content Include="ffmpeg.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="genx_radio.xtbl.template">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -85,6 +136,33 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Content Include="wwise\Presets\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Queries\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Queries\Factory Queries.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\SoundBanks\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Soundcaster Sessions\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\States\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Switches\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Test.wproj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwise\Triggers\Default Work Unit.wwu">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -96,16 +174,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ogg-info.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Folder Include="wwise\Originals\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if not exist "$(SolutionDir)$(OutDir)" mkdir "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)$(TargetName).*" "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)genx_radio.xtbl.template" "$(SolutionDir)$(OutDir)"
-copy /Y "$(TargetDir)ogg-info.exe" "$(SolutionDir)$(OutDir)"</PostBuildEvent>
+xcopy /c /y /i /s /e "$(TargetDir)wwise" "$(SolutionDir)$(OutDir)wwise"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
