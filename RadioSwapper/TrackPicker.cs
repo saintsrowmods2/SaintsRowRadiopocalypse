@@ -84,6 +84,10 @@ namespace RadioSwapper
 
         private string FileToConvert;
         private string ConvertedFile;
+        
+        private const string wwise32bit = @"C:\Program Files\Audiokinetic\Wwise v2012.2 build 4419\Authoring\Win32\Release\bin\WwiseCLI.exe";
+        private const string wwise64bit = @"C:\Program Files (x86)\Audiokinetic\Wwise v2012.2 build 4419\Authoring\Win32\Release\bin\WwiseCLI.exe";
+
         private void DoConversion(ProgressDialog dialog)
         {
             dialog.SetProgressBarSettings(0, 100, 10, ProgressBarStyle.Marquee);
@@ -97,9 +101,6 @@ namespace RadioSwapper
 
             string wwisePath = "";
 
-            string wwise32bit = @"C:\Program Files (x86)\Audiokinetic\Wwise v2012.2 build 4419\Authoring\Win32\Release\bin\WwiseCLI.exe";
-            string wwise64bit = @"C:\Program Files (x86)\Audiokinetic\Wwise v2012.2 build 4419\Authoring\Win32\Release\bin\WwiseCLI.exe";
-
             if (File.Exists(wwise32bit))
             {
                 wwisePath = wwise32bit;
@@ -108,12 +109,7 @@ namespace RadioSwapper
             {
                 wwisePath = wwise64bit;
             }
-            else
-            {
-                MessageBox.Show("Could not find a Wwise installation.\nYou need Wwise v2012.2 build 4419 installed to use audio that is not in wem format.");
-                return;
-            }
-
+            
             if (!Directory.Exists(tempDir))
                 Directory.CreateDirectory(tempDir);
 
@@ -193,6 +189,12 @@ namespace RadioSwapper
                 string extension = Path.GetExtension(filename);
                 if (extension != ".wem")
                 {
+                    if (!File.Exists(wwise32bit) && !File.Exists(wwise64bit))
+                    {
+                        MessageBox.Show("Could not find a Wwise installation.\nYou need Wwise v2012.2 build 4419 installed to use audio that is not in wem format.");
+                        return;
+                    }
+
                     ProgressDialog dialog = new ProgressDialog();
                     FileToConvert = filename;
                     dialog.RunTask(true, DoConversion);
