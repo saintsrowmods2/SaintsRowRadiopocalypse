@@ -201,9 +201,16 @@ namespace RadioSwapper
                     filename = ConvertedFile;
                 }
 
-                DurationPicker.Value = DurationCalculator.GetDuration(filename);
+                if (File.Exists(filename))
+                {
+                    DurationPicker.Value = DurationCalculator.GetDuration(filename);
 
-                FileNameBox.Text = filename;
+                    FileNameBox.Text = filename;
+                }
+                else
+                {
+                    MessageBox.Show(String.Format("'{0}' could not be converted.\nIs it really an audio file?", Path.GetFileName(BrowseOpenDialog.FileName)));
+                }
 
             }
         }

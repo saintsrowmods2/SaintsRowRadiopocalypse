@@ -142,7 +142,8 @@
             // 
             // BrowseOpenDialog
             // 
-            this.BrowseOpenDialog.Filter = "wwise audio files|*.wem|Audio files|*.mp3;*.mp4;*.flac;*.m4a;*.ogg";
+            this.BrowseOpenDialog.Filter = "Common files|*.wem;*.mp3;*.ogg;*.mp4;*.m4a;*.flac|Wwise audio files|*.wem|Audio f" +
+    "iles|*.mp3;*.mp4;*.flac;*.m4a;*.ogg|All files|*.*";
             this.BrowseOpenDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.BrowseOpenDialog_FileOk);
             // 
             // TrackPicker
