@@ -9,9 +9,10 @@ mkdir SaintsRowRadiopocalpyse-rev%1 1>NUL 2>NUL
 copy ..\license.txt SaintsRowRadiopocalpyse-rev%1\ 1>NUL 2>NUL
 
 mkdir SaintsRowRadiopocalpyse-rev%1\RadioSwapper 1>NUL 2>NUL
-copy ..\bin\Release\*.exe SaintsRowRadiopocalpyse-rev%1\RadioSwapper\ 1>NUL 2>NUL
-copy ..\bin\Release\*.dll SaintsRowRadiopocalpyse-rev%1\RadioSwapper\ 1>NUL 2>NUL
-copy ..\bin\Release\*.template SaintsRowRadiopocalpyse-rev%1\RadioSwapper\ 1>NUL 2>NUL
+copy /y ..\bin\Release\*.exe SaintsRowRadiopocalpyse-rev%1\RadioSwapper\ 1>NUL 2>NUL
+copy /y ..\bin\Release\*.dll SaintsRowRadiopocalpyse-rev%1\RadioSwapper\ 1>NUL 2>NUL
+copy /y ..\bin\Release\*.template SaintsRowRadiopocalpyse-rev%1\RadioSwapper\ 1>NUL 2>NUL
+xcopy /y /c /i /s /e ..\bin\Release\wwise SaintsRowRadiopocalpyse-rev%1\RadioSwapper\wwise 1>NUL 2>NUL
 
 mkdir SaintsRowRadiopocalpyse-rev%1\RadioEnabler 1>NUL 2>NUL
 copy ..\RadioEnabler\bin\Release\*.dll SaintsRowRadiopocalpyse-rev%1\RadioEnabler\ 1>NUL 2>NUL

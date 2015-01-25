@@ -181,6 +181,7 @@
     <PostBuildEvent>if not exist "$(SolutionDir)$(OutDir)" mkdir "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)$(TargetName).*" "$(SolutionDir)$(OutDir)"
 copy /Y "$(TargetDir)genx_radio.xtbl.template" "$(SolutionDir)$(OutDir)"
+copy /Y "$(TargetDir)ffmpeg.exe" "$(SolutionDir)$(OutDir)"
 xcopy /c /y /i /s /e "$(TargetDir)wwise" "$(SolutionDir)$(OutDir)wwise"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
