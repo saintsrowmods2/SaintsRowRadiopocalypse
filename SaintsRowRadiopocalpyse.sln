@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadioSwapper", "RadioSwappe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThomasJepp.SaintsRow", "ThomasJepp.SaintsRow\SaintsRow\ThomasJepp.SaintsRow.csproj", "{F660C694-866A-4814-936E-5A180D8543D2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Other items", "Other items", "{2D0BCA90-4F30-4AE8-8614-A2F25951BF82}"
+	ProjectSection(SolutionItems) = preProject
+		license.txt = license.txt
+		pack_release.cmd = pack_release.cmd
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
