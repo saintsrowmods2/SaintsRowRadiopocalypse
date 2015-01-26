@@ -54,6 +54,12 @@ namespace RadioSwapper
 
             string gamePath = Utility.GetGamePath(Game.SaintsRowGatOutOfHell);
 
+            if (gamePath == null)
+            {
+                MessageBox.Show("Unable to locate your Saints Row: Gat Out Of Hell.");
+                return;
+            }
+
             string soundsCommonPath = Path.Combine(gamePath, "packfiles", "pc", "cache", "sounds_common.vpp_pc");
 
             StreamingSoundbank originalBank = null;
