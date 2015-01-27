@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <Windows.h>
 
-#include "crc.hpp"
 #include "lua.hpp"
 
 LUA_GETTOP lua_gettop = NULL;

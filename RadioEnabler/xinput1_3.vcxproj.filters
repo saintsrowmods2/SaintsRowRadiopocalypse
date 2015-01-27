@@ -27,10 +27,10 @@
     <ClCompile Include="code\patch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\crc.cpp">
+    <ClCompile Include="code\lua.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="code\lua.cpp">
+    <ClCompile Include="code\gamedetect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,10 +44,10 @@
     <ClInclude Include="code\patch.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\crc.hpp">
+    <ClInclude Include="code\lua.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\lua.hpp">
+    <ClInclude Include="code\gamedetect.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -27,7 +27,7 @@
 
 #include "game.hpp"
 #include "patch.hpp"
-#include "crc.hpp"
+#include "gamedetect.hpp"
 #include "lua.hpp"
 
 static unsigned char radioFixup[] = {
@@ -38,9 +38,9 @@ static unsigned char radioFixup[] = {
 
 BOOL HookGame(void)
 {
-	switch (EXE_CRC)
+	switch (SRVersion)
 	{
-		case CRC_STEAM_PATCH_1:
+		case 877048: // SR: GOOH Steam Patch 1
 			return HookGame_SteamPatch1();
 			break;
 	}
@@ -83,7 +83,7 @@ BOOL HookGame_SteamPatch1(void)
 
 BOOL GameAttach(void)
 {
-	CheckExecutable();
+	VersionDetect();
 
 	return HookGame();
 }
