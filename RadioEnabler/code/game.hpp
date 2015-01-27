@@ -20,10 +20,9 @@
  *    distribution.
  */
 
-#ifndef __GAME_HPP
-#define __GAME_HPP
+#pragma once
 
-bool GameAttach(void);
+BOOL GameAttach(void);
 void GameDetach(void);
-
-#endif
+BOOL HookGame(void);
+BOOL HookGame_SteamPatch1(void);

@@ -61,7 +61,7 @@ BOOL APIENTRY DllMain(
 			
 			if (GameAttach() == false)
 			{
-				return FALSE;
+				MessageBoxW(0, L"Failed to attach to game!\nYour version of Saints Row: Gat out of Hell is not supported.\nCheck for an updated version of RadioEnabler!", L"Error", MB_OK | MB_ICONERROR);
 			}
 
 			break;

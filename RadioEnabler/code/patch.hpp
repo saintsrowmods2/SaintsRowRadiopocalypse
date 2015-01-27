@@ -20,12 +20,9 @@
  *    distribution.
  */
 
-#ifndef __PATCH_HPP
-#define __PATCH_HPP
+#pragma once
 
 bool PatchData(unsigned int address, void *data, int length);
 bool PatchCode(unsigned int address, void *data, int length);
 bool PatchCall(unsigned int address, unsigned int target);
 bool PatchJump(unsigned int address, unsigned int target);
-
-#endif

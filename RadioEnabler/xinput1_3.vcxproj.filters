@@ -27,6 +27,12 @@
     <ClCompile Include="code\patch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\crc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\lua.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\original.hpp">
@@ -36,6 +42,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\patch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\crc.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\lua.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

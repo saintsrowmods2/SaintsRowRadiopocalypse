@@ -87,13 +87,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="code\crc.cpp" />
     <ClCompile Include="code\dll.cpp" />
     <ClCompile Include="code\game.cpp" />
+    <ClCompile Include="code\lua.cpp" />
     <ClCompile Include="code\original.cpp" />
     <ClCompile Include="code\patch.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="code\crc.hpp" />
     <ClInclude Include="code\game.hpp" />
+    <ClInclude Include="code\lua.hpp" />
     <ClInclude Include="code\original.hpp" />
     <ClInclude Include="code\patch.hpp" />
   </ItemGroup>

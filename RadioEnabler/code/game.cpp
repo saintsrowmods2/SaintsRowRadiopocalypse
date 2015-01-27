@@ -27,65 +27,65 @@
 
 #include "game.hpp"
 #include "patch.hpp"
+#include "crc.hpp"
+#include "lua.hpp"
 
-#define UINT32(x) (*(unsigned int *)x)
+static unsigned char radioFixup[] = {
+	0x8A, 0x45, 0x08, // MOV al, [ebp+enable]
+	0xA2, 0x1C, 0xEC, 0x66, 0x01, // MOV onfoot_radio_enabled, al
+	0x90, 0x90, 0x90, 0x90, 0x90 // reserved for inserted JMP
+};
 
-typedef int (__cdecl *LUA_GETTOP)(void *);
-typedef const char * (__cdecl *LUA_TOLSTRING)(void *, int, size_t *);
-
-LUA_GETTOP lua_gettop = NULL;
-LUA_TOLSTRING lua_tolstring = NULL;
-
-int __cdecl DebugPrint(void *L)
+BOOL HookGame(void)
 {
-	const char *msg;
-	
-	msg = lua_tolstring(L, 1, NULL);
-	if (_strcmpi(msg, "vint") == 0)
+	switch (EXE_CRC)
 	{
-		msg = lua_tolstring(L, 2, NULL);
+		case CRC_STEAM_PATCH_1:
+			return HookGame_SteamPatch1();
+			break;
 	}
 
-	printf("%s", msg);
-	return 0;
+	return false;
 }
 
-bool HookGame(void)
+BOOL HookGame_SteamPatch1(void)
 {
-	printf("hooking...\n");
+	wprintf(L"Loading hooks and patches for Steam patch #1:\n");
+	BOOL success = false;
 
-	unsigned int debugPrintAddress = (unsigned int)&DebugPrint;
+	wprintf(L" - setting up Lua hooks... ");
+	unsigned int luaDebugPrintAddress = (unsigned int)&Lua_DebugPrint;
+	PatchCode(0x1010020, &luaDebugPrintAddress, 4);
+	lua_gettop = (LUA_GETTOP)0x109c820;
+	lua_tolstring = (LUA_TOLSTRING)0x109cc10;
+	wprintf(L"done.\n");
 
-	/*PatchCode(0x00f56773, &debugPrintAddress, 4);
-	lua_gettop = (LUA_GETTOP)0x00FE2070;
-	lua_tolstring = (LUA_TOLSTRING)0x00FE2460;*/
-	
-	printf("hooked.\n");
+	wprintf(L" - patching radio... ");
 
-	printf("patching radio...\n");
+	DWORD old = 0;
 
-	unsigned int value = 1;
+	success = PatchJump(0x00591E2B, (unsigned int)&radioFixup);
+	if (!success)
+		return false;
 
-	PatchCode(0x00591E31, &value, 1);
+	success = PatchJump(((unsigned int)&radioFixup) + 0x08, 0x00591E32);
+	if (!success)
+		return false;
 
-	printf("patched.\n");
+	success = VirtualProtect(&radioFixup, sizeof(radioFixup), PAGE_EXECUTE_READWRITE, &old);
+	if (!success)
+		return false;
+
+	wprintf(L"done.\n");
 
 	return true;
 }
 
-bool GameAttach(void)
+BOOL GameAttach(void)
 {
-	AllocConsole();
-	FILE *dummy;
-	freopen_s(&dummy, "CONIN$", "rb", stdin);
-	freopen_s(&dummy, "CONOUT$", "wb", stdout);
-	freopen_s(&dummy, "CONOUT$", "wb", stderr);
+	CheckExecutable();
 
-	printf("Allocated console.\n");
-
-	HookGame();
-
-	return true;
+	return HookGame();
 }
 
 void GameDetach(void)

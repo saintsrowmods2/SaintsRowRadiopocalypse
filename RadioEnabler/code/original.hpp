@@ -20,8 +20,7 @@
  *    distribution.
  */
 
-#ifndef __ORIGINAL_H
-#define __ORIGINAL_H
+#pragma once
 
 typedef int (*APIWRAPPER)(void);
 extern void LoadStubs(HINSTANCE dll);
@@ -41,5 +40,3 @@ extern "C"
 	extern APIWRAPPER p_XInputCancelGuideButtonWait;
 	extern APIWRAPPER p_XInputPowerOffController;
 }
-
-#endif
