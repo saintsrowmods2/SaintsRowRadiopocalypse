@@ -21,12 +21,20 @@
  */
 
 #include <windows.h>
-#include <shlwapi.h>
+
+#include <stdio.h>
+#include <fcntl.h>
+#include <io.h>
+#include <iostream>
+#include <fstream>
+#include <Shlwapi.h>
 
 #include "original.hpp"
 #include "game.hpp"
 
 HINSTANCE RealDLL;
+
+VOID WINAPI RedirectIOToConsole();
 
 void LoadStubs(HINSTANCE dll);
 BOOL APIENTRY DllMain(
@@ -36,6 +44,8 @@ BOOL APIENTRY DllMain(
 	{
 		case DLL_PROCESS_ATTACH:
 		{
+			RedirectIOToConsole();
+
 			wchar_t path[MAX_PATH];
 			GetSystemDirectoryW(path, MAX_PATH);
 			PathAppend(path, L"XINPUT1_3.dll");
@@ -66,4 +76,39 @@ BOOL APIENTRY DllMain(
 	}
 
 	return TRUE;
+}
+
+VOID WINAPI RedirectIOToConsole()
+{
+	int hConHandle;
+	long lStdHandle;
+	CONSOLE_SCREEN_BUFFER_INFO coninfo;
+	FILE *fp;
+	// allocate a console for this app
+	AllocConsole();
+	// set the screen buffer to be big enough to let us scroll text
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
+	coninfo.dwSize.Y = 1000;
+	SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), coninfo.dwSize);
+	// redirect unbuffered STDOUT to the console
+	lStdHandle = (long)GetStdHandle(STD_OUTPUT_HANDLE);
+	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+	fp = _fdopen(hConHandle, "w");
+	*stdout = *fp;
+	setvbuf(stdout, NULL, _IONBF, 0);
+	// redirect unbuffered STDIN to the console
+	lStdHandle = (long)GetStdHandle(STD_INPUT_HANDLE);
+	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+	fp = _fdopen(hConHandle, "r");
+	*stdin = *fp;
+	setvbuf(stdin, NULL, _IONBF, 0);
+	// redirect unbuffered STDERR to the console
+	lStdHandle = (long)GetStdHandle(STD_ERROR_HANDLE);
+	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+	fp = _fdopen(hConHandle, "w");
+	*stderr = *fp;
+	setvbuf(stderr, NULL, _IONBF, 0);
+	// make cout, wcout, cin, wcin, wcerr, cerr, wclog and clog 
+	// point to console as well
+	std::ios::sync_with_stdio();
 }
