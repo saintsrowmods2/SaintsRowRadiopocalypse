@@ -33,6 +33,12 @@
     <ClCompile Include="code\gamedetect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\Log.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\original.hpp">
@@ -50,8 +56,15 @@
     <ClInclude Include="code\gamedetect.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="code\Log.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\config.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="code\exports.def" />
+    <None Include="RadioEnabler.ini" />
   </ItemGroup>
 </Project>

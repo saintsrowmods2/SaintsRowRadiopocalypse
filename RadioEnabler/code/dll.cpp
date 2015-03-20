@@ -30,7 +30,9 @@
 #include <Shlwapi.h>
 
 #include "original.hpp"
+#include "config.hpp"
 #include "game.hpp"
+#include "Log.hpp"
 
 HINSTANCE RealDLL;
 
@@ -44,7 +46,14 @@ BOOL APIENTRY DllMain(
 	{
 		case DLL_PROCESS_ATTACH:
 		{
-			RedirectIOToConsole();
+			ConfigLoad();
+
+			if (ShouldCreateConsole)
+			{
+				RedirectIOToConsole();
+			}
+
+			OpenLog();
 
 			wchar_t path[MAX_PATH];
 			GetSystemDirectoryW(path, MAX_PATH);
@@ -58,6 +67,7 @@ BOOL APIENTRY DllMain(
 				return FALSE;
 			}
 			LoadStubs(RealDLL);
+
 			
 			if (GameAttach() == false)
 			{
@@ -69,6 +79,7 @@ BOOL APIENTRY DllMain(
 
 		case DLL_PROCESS_DETACH:
 		{
+			CloseLog();
 			GameDetach();
 			FreeLibrary(RealDLL);
 			break;

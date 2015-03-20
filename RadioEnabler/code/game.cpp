@@ -29,6 +29,8 @@
 #include "patch.hpp"
 #include "gamedetect.hpp"
 #include "lua.hpp"
+#include "Log.hpp"
+#include "config.hpp"
 
 static unsigned char radioFixup[] = {
 	0x8A, 0x45, 0x08, // MOV al, [ebp+enable]
@@ -50,33 +52,44 @@ BOOL HookGame(void)
 
 BOOL HookGame_SteamPatch1(void)
 {
-	wprintf(L"Loading hooks and patches for Steam patch #1:\n");
+	WriteToLog(L"HookGame", L"Loading hooks and patches for Steam patch #1:\n");
 	BOOL success = false;
+	
+	if (HookLuaDebugPrint)
+	{
+		WriteToLog(L"HookGame", L" - setting up Lua hooks...\n");
+		unsigned int luaDebugPrintAddress = (unsigned int)&Lua_DebugPrint;
+		PatchCode(0x1010020, &luaDebugPrintAddress, 4);
+		lua_gettop = (LUA_GETTOP)0x109c820;
+		lua_tolstring = (LUA_TOLSTRING)0x109cc10;
+	}
 
-	wprintf(L" - setting up Lua hooks... ");
-	unsigned int luaDebugPrintAddress = (unsigned int)&Lua_DebugPrint;
-	PatchCode(0x1010020, &luaDebugPrintAddress, 4);
-	lua_gettop = (LUA_GETTOP)0x109c820;
-	lua_tolstring = (LUA_TOLSTRING)0x109cc10;
-	wprintf(L"done.\n");
+	if (EnableRadio)
+	{
+		WriteToLog(L"HookGame", L" - patching radio...\n");
 
-	wprintf(L" - patching radio... ");
+		DWORD old = 0;
 
-	DWORD old = 0;
+		success = PatchJump(0x00591E2B, (unsigned int)&radioFixup);
+		if (!success)
+			return false;
 
-	success = PatchJump(0x00591E2B, (unsigned int)&radioFixup);
-	if (!success)
-		return false;
+		success = PatchJump(((unsigned int)&radioFixup) + 0x08, 0x00591E32);
+		if (!success)
+			return false;
 
-	success = PatchJump(((unsigned int)&radioFixup) + 0x08, 0x00591E32);
-	if (!success)
-		return false;
+		success = VirtualProtect(&radioFixup, sizeof(radioFixup), PAGE_EXECUTE_READWRITE, &old);
+		if (!success)
+			return false;
+	}
 
-	success = VirtualProtect(&radioFixup, sizeof(radioFixup), PAGE_EXECUTE_READWRITE, &old);
-	if (!success)
-		return false;
-
-	wprintf(L"done.\n");
+	if (DisableLoadingSRIVCharacter)
+	{
+		WriteToLog(L"HookGame", L" - disabling loading SRIV character...\n");
+		success = PatchJump(0x00D16F48, 0x00D16FA9);
+		if (!success)
+			return false;
+	}
 
 	return true;
 }
