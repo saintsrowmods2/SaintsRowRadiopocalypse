@@ -91,6 +91,14 @@ BOOL HookGame_SteamPatch1(void)
 			return false;
 	}
 
+	if (PreventCharacterSwapOnCoopJoin)
+	{
+		WriteToLog(L"HookGame", L" - preventing character swap on co-op join...\n");
+		success = PatchJump(0x00B23237, 0xB23244);
+		if (!success)
+			return false;
+	}
+
 	return true;
 }
 

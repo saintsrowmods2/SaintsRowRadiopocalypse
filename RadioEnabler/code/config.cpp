@@ -11,6 +11,7 @@ BOOL ShouldCreateConsole = true;
 BOOL DisableLoadingSRIVCharacter = false;
 BOOL HookLuaDebugPrint = true;
 BOOL EnableRadio = true;
+BOOL PreventCharacterSwapOnCoopJoin = false;
 
 void ConfigLoad()
 {
@@ -46,4 +47,10 @@ void ConfigLoad()
 		DisableLoadingSRIVCharacter = true;
 	else if (_wcsicmp(buffer, L"0") == 0)
 		DisableLoadingSRIVCharacter = true;
+
+	GetPrivateProfileString(L"hooks", L"prevent_coop_join_character_swap", L"0", buffer, MAX_PATH, configPath.c_str());
+	if (_wcsicmp(buffer, L"true") == 0)
+		PreventCharacterSwapOnCoopJoin = true;
+	else if (_wcsicmp(buffer, L"1") == 0)
+		PreventCharacterSwapOnCoopJoin = true;
 }
