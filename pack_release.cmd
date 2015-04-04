@@ -16,6 +16,7 @@ xcopy /y /c /i /s /e ..\bin\Release\wwise SaintsRowRadiopocalpyse-rev%1\RadioSwa
 
 mkdir SaintsRowRadiopocalpyse-rev%1\RadioEnabler 1>NUL 2>NUL
 copy ..\RadioEnabler\bin\Release\*.dll SaintsRowRadiopocalpyse-rev%1\RadioEnabler\ 1>NUL 2>NUL
+copy ..\RadioEnabler\RadioEnabler.ini SaintsRowRadiopocalpyse-rev%1\RadioEnabler\ 1>NUL 2>NUL
 
 "C:\Program Files\7-Zip\7z.exe" a ..\SaintsRowRadiopocalpyse-rev%1.zip SaintsRowRadiopocalpyse-rev%1
 cd ..
