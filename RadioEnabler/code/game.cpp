@@ -30,6 +30,7 @@
 #include "gamedetect.hpp"
 #include "lua.hpp"
 #include "Log.hpp"
+#include "PerFrame.hpp"
 #include "config.hpp"
 
 static unsigned char radioFixup[] = {
@@ -55,6 +56,14 @@ BOOL HookGame_SteamPatch1(void)
 	WriteToLog(L"HookGame", L"Loading hooks and patches for Steam patch #1:\n");
 	BOOL success = false;
 	
+	WriteToLog(L"HookGame", L" - hooking game loop...\n");
+	game_do_frame = (GAME_DO_FRAME)0x7133f0;
+	success = PatchCall(0x00715B2C, (unsigned int)&perFrameHook);
+	if (!success)
+		return false;
+
+	Option_PauseOnFocusLost = (unsigned char*)0x168A174;
+
 	if (HookLuaDebugPrint)
 	{
 		WriteToLog(L"HookGame", L" - setting up Lua hooks...\n");

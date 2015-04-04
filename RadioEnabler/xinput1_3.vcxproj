@@ -95,6 +95,7 @@
     <ClCompile Include="code\lua.cpp" />
     <ClCompile Include="code\original.cpp" />
     <ClCompile Include="code\patch.cpp" />
+    <ClCompile Include="code\PerFrame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\config.hpp" />
@@ -104,6 +105,7 @@
     <ClInclude Include="code\lua.hpp" />
     <ClInclude Include="code\original.hpp" />
     <ClInclude Include="code\patch.hpp" />
+    <ClInclude Include="code\PerFrame.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="code\exports.def" />

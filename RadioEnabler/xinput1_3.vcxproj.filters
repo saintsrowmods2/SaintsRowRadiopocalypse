@@ -39,6 +39,9 @@
     <ClCompile Include="code\config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\PerFrame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\original.hpp">
@@ -60,6 +63,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\config.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\PerFrame.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

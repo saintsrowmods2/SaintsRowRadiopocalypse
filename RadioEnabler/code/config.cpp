@@ -12,6 +12,7 @@ BOOL DisableLoadingSRIVCharacter = false;
 BOOL HookLuaDebugPrint = true;
 BOOL EnableRadio = true;
 BOOL PreventCharacterSwapOnCoopJoin = false;
+BOOL PauseOnFocusLost = true;
 
 void ConfigLoad()
 {
@@ -53,4 +54,10 @@ void ConfigLoad()
 		PreventCharacterSwapOnCoopJoin = true;
 	else if (_wcsicmp(buffer, L"1") == 0)
 		PreventCharacterSwapOnCoopJoin = true;
+
+	GetPrivateProfileString(L"options", L"pause_on_focus_lost", L"1", buffer, MAX_PATH, configPath.c_str());
+	if (_wcsicmp(buffer, L"false") == 0)
+		PauseOnFocusLost = false;
+	else if (_wcsicmp(buffer, L"0") == 0)
+		PauseOnFocusLost = false;
 }

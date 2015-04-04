@@ -7,5 +7,6 @@ extern BOOL DisableLoadingSRIVCharacter;
 extern BOOL HookLuaDebugPrint;
 extern BOOL EnableRadio;
 extern BOOL PreventCharacterSwapOnCoopJoin;
+extern BOOL PauseOnFocusLost;
 
 extern void ConfigLoad();
