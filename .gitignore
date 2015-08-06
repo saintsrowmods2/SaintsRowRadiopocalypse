@@ -2,3 +2,6 @@ bin/
 *.sdf
 obj/
 *.opensdf
+packages/
+*.suo
+*.zip

@@ -20,6 +20,8 @@
  *    distribution.
  */
 
+#pragma unmanaged
+
 #include <windows.h>
 #include "original.hpp"
 

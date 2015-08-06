@@ -1,3 +1,5 @@
+#pragma unmanaged
+
 #include <stdio.h>
 #include <Windows.h>
 
@@ -10,6 +12,12 @@ INT SRVersion = 0;
 
 VOID VersionDetect()
 {
+	if (UINT32(0x009424D7) == 1195412)
+	{
+		SRVersion = -1;
+		WriteToLog(L"VersionDetect", L"Detected Saints Row: Gat out of Hell Prerelease.\n");
+	}
+
 	if (UINT32(0x007160FE) == 877048)
 	{
 		SRVersion = 1;

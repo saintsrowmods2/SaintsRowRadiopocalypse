@@ -20,6 +20,8 @@
  *    distribution.
  */
 
+#pragma unmanaged
+
 #include <windows.h>
 #include <shlwapi.h>
 #include <stdio.h>
@@ -32,6 +34,13 @@
 #include "Log.hpp"
 #include "PerFrame.hpp"
 #include "config.hpp"
+#include "DebugWindow.hpp"
+
+static unsigned char radioFixup_Prerelease[] = {
+	0x8A, 0x45, 0x08, // MOV al, [ebp+enable]
+	0xA2, 0x1C, 0xEC, 0x66, 0x01, // MOV onfoot_radio_enabled, al
+	0x90, 0x90, 0x90, 0x90, 0x90 // reserved for inserted JMP
+};
 
 static unsigned char radioFixup_Patch1[] = {
 	0x8A, 0x45, 0x08, // MOV al, [ebp+enable]
@@ -49,6 +58,9 @@ BOOL HookGame(void)
 {
 	switch (SRVersion)
 	{
+		case -1:
+			return HookGame_Prerelease();
+			break;
 		case 1: // SR: GOOH Steam Patch 1
 			return HookGame_SteamPatch1();
 			break;
@@ -58,6 +70,72 @@ BOOL HookGame(void)
 	}
 
 	return false;
+}
+
+BOOL HookGame_Prerelease(void)
+{
+	WriteToLog(L"HookGame", L"Loading hooks and patches for prerelease build:\n");
+	BOOL success = false;
+
+	WriteToLog(L"HookGame", L" - hooking game loop...\n");
+	game_do_frame = (GAME_DO_FRAME)0x00789B40;
+	success = PatchCall(0x0078C355, (unsigned int)&perFrameHook);
+	if (!success)
+		return false;
+
+	Option_PauseOnFocusLost = (unsigned char*)0x017B33BC;
+
+	if (HookLuaDebugPrint)
+	{
+		WriteToLog(L"HookGame", L" - setting up Lua hooks...\n");
+		unsigned int luaDebugPrintAddress = (unsigned int)&Lua_DebugPrint;
+		PatchCode(0x1178C30, &luaDebugPrintAddress, 4);
+		lua_gettop = (LUA_GETTOP)0x012D1B00;
+		lua_tolstring = (LUA_TOLSTRING)0x012D1FD0;
+	}
+
+	if (EnableRadio)
+	{
+		WriteToLog(L"HookGame", L" - patching radio...\n");
+
+		DWORD old = 0;
+
+		success = PatchJump(0x005DB2DB, (unsigned int)&radioFixup_Prerelease);
+		if (!success)
+			return false;
+
+		success = PatchJump(((unsigned int)&radioFixup_Prerelease) + 0x08, 0x005DB2E2);
+		if (!success)
+			return false;
+
+		success = VirtualProtect(&radioFixup_Prerelease, sizeof(radioFixup_Prerelease), PAGE_EXECUTE_READWRITE, &old);
+		if (!success)
+			return false;
+	}
+
+	if (DisableLoadingSRIVCharacter)
+	{
+		WriteToLog(L"HookGame", L" - disabling loading SRIV character...\n");
+		success = PatchJump(0x00E2E828, 0x00E2E889);
+		if (!success)
+			return false;
+	}
+
+	if (PreventCharacterSwapOnCoopJoin)
+	{
+		WriteToLog(L"HookGame", L" - preventing character swap on co-op join...\n");
+		success = PatchJump(0x00C0B9DF, 0x00C0B9F3);
+		if (!success)
+			return false;
+	}
+
+	WriteToLog(L"HookGame", L" - hooking window creation...\n");
+	PatchCodeByte(0x011BCD10, 0x90); // Insert NOP
+	success = PatchCall(0x011BCD11, (unsigned int)&SetForegroundWindow_Hook);
+	if (!success)
+		return false;
+
+	return true;
 }
 
 BOOL HookGame_SteamPatch1(void)
@@ -176,6 +254,12 @@ BOOL HookGame_SteamPatch2(void)
 		if (!success)
 			return false;
 	}
+
+	WriteToLog(L"HookGame", L" - hooking window creation...\n");
+	PatchCodeByte(0x00FB5E50, 0x90); // Insert NOP
+	success = PatchCall(0x00FB5E51, (unsigned int)&SetForegroundWindow_Hook);
+	if (!success)
+		return false;
 
 	return true;
 }

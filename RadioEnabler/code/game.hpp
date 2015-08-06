@@ -25,5 +25,6 @@
 BOOL GameAttach(void);
 void GameDetach(void);
 BOOL HookGame(void);
+BOOL HookGame_Prerelease(void);
 BOOL HookGame_SteamPatch1(void);
 BOOL HookGame_SteamPatch2(void);

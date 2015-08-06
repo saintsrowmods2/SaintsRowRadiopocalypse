@@ -15,6 +15,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>xinput1_3</RootNamespace>
     <ProjectName>xinput1_3</ProjectName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -57,7 +58,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;XINPUT1_3_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <CompileAsManaged>true</CompileAsManaged>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>false</ExceptionHandling>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -75,7 +81,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;XINPUT1_3_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <CompileAsManaged>true</CompileAsManaged>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -88,6 +96,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="code\config.cpp" />
+    <ClCompile Include="code\DebugWindow.cpp">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</CompileAsManaged>
+      <AdditionalUsingDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)DebugWindow\bin\Release;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <AdditionalUsingDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)DebugWindow\bin\Debug;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+    </ClCompile>
     <ClCompile Include="code\dll.cpp" />
     <ClCompile Include="code\game.cpp" />
     <ClCompile Include="code\gamedetect.cpp" />
@@ -99,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\config.hpp" />
+    <ClInclude Include="code\DebugWindow.hpp" />
     <ClInclude Include="code\game.hpp" />
     <ClInclude Include="code\gamedetect.hpp" />
     <ClInclude Include="code\Log.hpp" />
@@ -112,6 +126,16 @@
     <None Include="RadioEnabler.ini">
       <DeploymentContent>true</DeploymentContent>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DebugWindow\DebugWindow.csproj">
+      <Project>{99d87953-1f53-49ba-a564-c3252e473d3a}</Project>
+      <Private>true</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

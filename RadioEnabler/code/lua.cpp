@@ -1,3 +1,5 @@
+#pragma unmanaged
+
 #include <stdio.h>
 #include <Windows.h>
 #include <string>

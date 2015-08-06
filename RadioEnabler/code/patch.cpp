@@ -20,6 +20,8 @@
  *    distribution.
  */
 
+#pragma unmanaged
+
 #include <windows.h>
 
 #include "patch.hpp"
@@ -48,6 +50,18 @@ bool PatchCode(unsigned int address, void *data, int length)
 		return false;
 	}
 
+	return true;
+}
+
+bool PatchCodeByte(unsigned int address, unsigned char newByte)
+{
+	DWORD old, junk;
+	if (VirtualProtect((void *)address, 1, PAGE_EXECUTE_READWRITE, &old) == FALSE)
+	{
+		return false;
+	}
+	memcpy((void *)address, (void *)&newByte, 1);
+	VirtualProtect((void *)address, 1, old, &junk);
 	return true;
 }
 

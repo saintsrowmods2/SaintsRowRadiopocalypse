@@ -24,5 +24,6 @@
 
 bool PatchData(unsigned int address, void *data, int length);
 bool PatchCode(unsigned int address, void *data, int length);
+bool PatchCodeByte(unsigned int address, unsigned char newByte);
 bool PatchCall(unsigned int address, unsigned int target);
 bool PatchJump(unsigned int address, unsigned int target);
