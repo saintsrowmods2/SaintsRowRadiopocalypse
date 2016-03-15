@@ -52,7 +52,7 @@ namespace RadioSwapper
         {
             List<int> durations = new List<int>();
 
-            string gamePath = Utility.GetGamePath(Game.SaintsRowGatOutOfHell);
+            string gamePath = Utility.GetGamePath(GameSteamID.SaintsRowGatOutOfHell);
 
             if (gamePath == null)
             {
