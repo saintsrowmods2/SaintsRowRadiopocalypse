@@ -168,13 +168,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ThomasJepp.SaintsRow\SaintsRow\ThomasJepp.SaintsRow.csproj">
+    <Folder Include="wwise\Originals\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ThomasJepp.SaintsRow\ThomasJepp.SaintsRow.csproj">
       <Project>{f660c694-866a-4814-936e-5a180d8543d2}</Project>
       <Name>ThomasJepp.SaintsRow</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwise\Originals\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
