@@ -15,6 +15,7 @@ BOOL HookLuaDebugPrint = true;
 BOOL EnableRadio = true;
 BOOL PreventCharacterSwapOnCoopJoin = false;
 BOOL PauseOnFocusLost = true;
+BOOL CreateDebugWindow = false;
 
 void ConfigLoad()
 {
@@ -62,4 +63,10 @@ void ConfigLoad()
 		PauseOnFocusLost = false;
 	else if (_wcsicmp(buffer, L"0") == 0)
 		PauseOnFocusLost = false;
+
+	GetPrivateProfileString(L"options", L"create_debug_window", L"0", buffer, MAX_PATH, configPath.c_str());
+	if (_wcsicmp(buffer, L"true") == 0)
+		CreateDebugWindow = true;
+	else if (_wcsicmp(buffer, L"1") == 0)
+		CreateDebugWindow = true;
 }

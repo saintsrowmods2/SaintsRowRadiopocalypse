@@ -1,4 +1,5 @@
 #include <Windows.h>
+#include "config.hpp"
 #include "gamedetect.hpp"
 #include "DebugWindow.hpp"
 
@@ -19,10 +20,16 @@ BOOL __stdcall SetForegroundWindow_Hook(HWND hWnd)
 
 void InitialiseDebugWindow(INT srVersion)
 {
-	UnmanagedInterface::CreateDebugWindow(srVersion);
+	if (CreateDebugWindow)
+	{
+		UnmanagedInterface::CreateDebugWindow(srVersion);
+	}
 }
 
 void UpdateDebugWindow(void)
 {
-	UnmanagedInterface::UpdateWindow();
+	if (CreateDebugWindow)
+	{
+		UnmanagedInterface::UpdateWindow();
+	}
 }
