@@ -38,7 +38,7 @@
 
 static unsigned char radioFixup_Prerelease[] = {
 	0x8A, 0x45, 0x08, // MOV al, [ebp+enable]
-	0xA2, 0x1C, 0xEC, 0x66, 0x01, // MOV onfoot_radio_enabled, al
+	0xA2, 0x6C, 0x7E, 0x79, 0x01, // MOV onfoot_radio_enabled, al
 	0x90, 0x90, 0x90, 0x90, 0x90 // reserved for inserted JMP
 };
 
@@ -54,18 +54,29 @@ static unsigned char radioFixup_Patch2[] = {
 	0x90, 0x90, 0x90, 0x90, 0x90 // reserved for inserted JMP
 };
 
+static unsigned char radioFixup_GOG[] = {
+	0x8A, 0x45, 0x08, // MOV al, [ebp+enable]
+	0xA2, 0x4C, 0x0E, 0x74, 0x01, // MOV onfoot_radio_enabled, al
+	0x90, 0x90, 0x90, 0x90, 0x90 // reserved for inserted JMP
+};
+
 BOOL HookGame(void)
 {
 	switch (SRVersion)
 	{
-		case -1:
+		case GAMEVER_PRERELEASE:
 			return HookGame_Prerelease();
 			break;
-		case 1: // SR: GOOH Steam Patch 1
+
+		case GAMEVER_STEAM_PATCH1: // SR: GOOH Steam Patch 1
 			return HookGame_SteamPatch1();
 			break;
-		case 2: // SR: GOOH Steam Patch 2
+		case GAMEVER_STEAM_PATCH2: // SR: GOOH Steam Patch 2
 			return HookGame_SteamPatch2();
+			break;
+
+		case GAMEVER_GOG: // GOG original release? (RE'd 2017-05-11)
+			return HookGame_GOG();
 			break;
 	}
 
@@ -258,6 +269,78 @@ BOOL HookGame_SteamPatch2(void)
 	WriteToLog(L"HookGame", L" - hooking window creation...\n");
 	PatchCodeByte(0x00FB5E50, 0x90); // Insert NOP
 	success = PatchCall(0x00FB5E51, (unsigned int)&SetForegroundWindow_Hook);
+	if (!success)
+		return false;
+
+	return true;
+}
+
+BOOL HookGame_GOG(void)
+{
+	WriteToLog(L"HookGame", L"Loading hooks and patches for GOG:\n");
+	BOOL success = false;
+
+	
+	WriteToLog(L"HookGame", L" - hooking game loop...\n");
+	game_do_frame = (GAME_DO_FRAME)0x00744BC0;
+	success = PatchCall(0x07473C5, (unsigned int)&perFrameHook);
+	if (!success)
+		return false;
+
+	Option_PauseOnFocusLost = (unsigned char*)0x0175C4E4;
+	
+	if (HookLuaDebugPrint)
+	{
+		WriteToLog(L"HookGame", L" - setting up Lua hooks...\n");
+		unsigned int luaDebugPrintAddress = (unsigned int)&Lua_DebugPrint;
+		PatchCode(0x1131C10, &luaDebugPrintAddress, 4);
+		lua_gettop = (LUA_GETTOP)0x1289EC0;
+		lua_tolstring = (LUA_TOLSTRING)0x0128A390;
+	}
+
+	
+	if (EnableRadio)
+	{
+		WriteToLog(L"HookGame", L" - patching radio...\n");
+
+		DWORD old = 0;
+
+		success = PatchJump(0x005A0C6B, (unsigned int)&radioFixup_GOG);
+		if (!success)
+			return false;
+
+		success = PatchJump(((unsigned int)&radioFixup_GOG) + 0x08, 0x005A0C72);
+		if (!success)
+			return false;
+
+		success = VirtualProtect(&radioFixup_GOG, sizeof(radioFixup_GOG), PAGE_EXECUTE_READWRITE, &old);
+		if (!success)
+			return false;
+	
+	}
+
+	/*
+	 * This seems to be ripped out of the GOG release
+	if (DisableLoadingSRIVCharacter)
+	{
+		WriteToLog(L"HookGame", L" - disabling loading SRIV character...\n");
+		success = PatchJump(0x00E2E828, 0x00E2E889);
+		if (!success)
+			return false;
+	}
+	*/
+
+	if (PreventCharacterSwapOnCoopJoin)
+	{
+		WriteToLog(L"HookGame", L" - preventing character swap on co-op join...\n");
+		success = PatchJump(0x00BAAA47, 0x00BAAA54);
+		if (!success)
+			return false;
+	}
+
+	WriteToLog(L"HookGame", L" - hooking window creation...\n");
+	PatchCodeByte(0x01222940, 0x90); // Insert NOP
+	success = PatchCall(0x01222941, (unsigned int)&SetForegroundWindow_Hook);
 	if (!success)
 		return false;
 

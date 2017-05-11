@@ -10,6 +10,7 @@ namespace DebugWindow
     {
         Prerelease = -1,
         SteamPatch1 = 1,
-        SteamPatch2 = 2
+        SteamPatch2 = 2,
+        GOGRelease = 100,
     }
 }

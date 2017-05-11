@@ -34,6 +34,9 @@ namespace DebugWindow
                 case GOOHVersion.SteamPatch2:
                     functionPtr = new IntPtr(0x00B1CC10);
                     break;
+                case GOOHVersion.GOGRelease:
+                    functionPtr = new IntPtr(0x00BA4740);
+                    break;
                 default:
                     throw new NotImplementedException();
             }

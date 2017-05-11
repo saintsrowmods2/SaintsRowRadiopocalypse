@@ -18,6 +18,8 @@ namespace DebugWindow
                         return new IntPtr(Memory.ReadInt32(0x02F7E94C));
                     case GOOHVersion.SteamPatch2:
                         return new IntPtr(Memory.ReadInt32(0x02E597FC));
+                    case GOOHVersion.GOGRelease:
+                        return new IntPtr(Memory.ReadInt32(0x02F27E7C));
                     default:
                         throw new NotImplementedException();
                 }

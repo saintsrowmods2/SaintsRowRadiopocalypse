@@ -55,7 +55,7 @@
     <Compile Include="Memory.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="SRMethods.cs" />
-    <Compile Include="SRVersion.cs" />
+    <Compile Include="GOOHVersion.cs" />
     <Compile Include="Structs\FLMatrix.cs" />
     <Compile Include="Structs\FLVector.cs" />
     <Compile Include="Structs\PlayerWarpParams.cs" />

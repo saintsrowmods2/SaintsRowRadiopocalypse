@@ -22,9 +22,15 @@
 
 #pragma once
 
+#define GAMEVER_PRERELEASE -1
+#define GAMEVER_STEAM_PATCH1 1
+#define GAMEVER_STEAM_PATCH2 2
+#define GAMEVER_GOG 100
+
 BOOL GameAttach(void);
 void GameDetach(void);
 BOOL HookGame(void);
 BOOL HookGame_Prerelease(void);
 BOOL HookGame_SteamPatch1(void);
 BOOL HookGame_SteamPatch2(void);
+BOOL HookGame_GOG(void);

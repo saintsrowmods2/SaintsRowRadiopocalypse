@@ -99,6 +99,4 @@ VOID WINAPI RedirectIOToConsole()
 		freopen_s(&conout, "conout$", "w", stdout);
 		freopen_s(&conout, "conout$", "w", stderr);
 	}
-
-	printf("test!\n");
 }
